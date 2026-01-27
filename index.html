@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vishnu | AI Engineer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        // Strict Monochrome Palette
+                        black: '#000000',
+                        dark: '#0a0a0a',
+                        card: '#111111',
+                        border: '#262626',
+                        light: '#e5e5e5',
+                        grey: '#a3a3a3',
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'cursor': 'cursor .75s step-end infinite',
+                    },
+                    keyframes: {
+                        cursor: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for Webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555555;
+        }
+        
+        .glass-nav {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Subtle noise texture for background */
+        .bg-noise {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+        
+        .typing-cursor::after {
+            content: "▋";
+            margin-left: 2px;
+            animation: cursor 1s infinite;
+        }
+
+        /* Mobile Sidebar Styles */
+        .mobile-sidebar {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .mobile-overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .mobile-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        /* Hamburger Menu Animation */
+        .hamburger-line {
+            transition: all 0.3s ease-in-out;
+            transform-origin: center;
+        }
+        
+        .hamburger.active .line-1 {
+            transform: rotate(45deg) translateY(6px);
+        }
+        
+        .hamburger.active .line-2 {
+            opacity: 0;
+        }
+        
+        .hamburger.active .line-3 {
+            transform: rotate(-45deg) translateY(-6px);
+        }
+    </style>
+</head>
+<body class="bg-black text-light font-sans selection:bg-white selection:text-black antialiased">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 glass-nav transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0 cursor-pointer group" onclick="window.scrollTo(0,0)">
+                    <span class="text-2xl font-bold tracking-tighter group-hover:opacity-80 transition-opacity">VISHNU</span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-10">
+                        <a href="#about" class="text-grey hover:text-white text-sm font-medium transition-colors">About</a>
+                        <a href="#experience" class="text-grey hover:text-white text-sm font-medium transition-colors">Experience</a>
+                        <a href="#skills" class="text-grey hover:text-white text-sm font-medium transition-colors">Skills</a>
+                        <a href="#projects" class="text-grey hover:text-white text-sm font-medium transition-colors">Projects</a>
+                        <a href="#contact" class="px-5 py-2.5 rounded-full bg-white text-black hover:bg-grey hover:text-white transition-all text-sm font-bold">Contact Me</a>
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button type="button" onclick="toggleMobileMenu()" class="text-white p-2 hamburger" id="hamburger">
+                        <div class="w-6 h-5 flex flex-col justify-between">
+                            <span class="hamburger-line line-1 w-full h-0.5 bg-white"></span>
+                            <span class="hamburger-line line-2 w-full h-0.5 bg-white"></span>
+                            <span class="hamburger-line line-3 w-full h-0.5 bg-white"></span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </nav>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="mobile-overlay fixed inset-0 bg-black/80 backdrop-blur-sm z-40 md:hidden" id="mobile-overlay" onclick="toggleMobileMenu()"></div>
+
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar fixed top-0 right-0 h-full w-80 bg-dark border-l border-border z-50 md:hidden" id="mobile-menu">
+        <div class="flex flex-col h-full">
+            <!-- Sidebar Header -->
+            <div class="flex items-center justify-between p-6 border-b border-border">
+                <span class="text-xl font-bold tracking-tighter">MENU</span>
+                <button onclick="toggleMobileMenu()" class="text-white p-2 hover:bg-card rounded-lg transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <!-- Sidebar Navigation -->
+            <nav class="flex-1 overflow-y-auto">
+                <div class="p-4 space-y-2">
+                    <a href="#about" onclick="toggleMobileMenu()" class="text-grey hover:text-white hover:bg-card block px-4 py-4 text-base font-medium rounded-lg transition-all">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                            <span>About</span>
+                        </div>
+                    </a>
+                    <a href="#experience" onclick="toggleMobileMenu()" class="text-grey hover:text-white hover:bg-card block px-4 py-4 text-base font-medium rounded-lg transition-all">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="briefcase" class="w-5 h-5"></i>
+                            <span>Experience</span>
+                        </div>
+                    </a>
+                    <a href="#skills" onclick="toggleMobileMenu()" class="text-grey hover:text-white hover:bg-card block px-4 py-4 text-base font-medium rounded-lg transition-all">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="code" class="w-5 h-5"></i>
+                            <span>Skills</span>
+                        </div>
+                    </a>
+                    <a href="#projects" onclick="toggleMobileMenu()" class="text-grey hover:text-white hover:bg-card block px-4 py-4 text-base font-medium rounded-lg transition-all">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="folder" class="w-5 h-5"></i>
+                            <span>Projects</span>
+                        </div>
+                    </a>
+                    <a href="#contact" onclick="toggleMobileMenu()" class="text-white bg-white/10 hover:bg-white hover:text-black block px-4 py-4 text-base font-bold rounded-lg transition-all">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
+                            <span>Contact Me</span>
+                        </div>
+                    </a>
+                </div>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="p-6 border-t border-border">
+                <div class="flex gap-4 justify-center">
+                    <a href="https://github.com/Vznu7" target="_blank" class="p-3 bg-card hover:bg-white/10 rounded-lg transition-colors">
+                        <i data-lucide="github" class="w-5 h-5"></i>
+                    </a>
+                    <a href="resume.pdf" target="_blank" class="p-3 bg-card hover:bg-white/10 rounded-lg transition-colors">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 px-4 bg-noise">
+        <!-- Subtle Glow (White only) -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-white rounded-full mix-blend-overlay filter blur-[128px] opacity-10 animate-pulse-slow"></div>
+
+        <div class="relative max-w-7xl mx-auto text-center z-10 py-8">
+            <div class="inline-flex items-center px-3 py-1.5 rounded-full border border-border bg-card mb-6">
+                <span class="w-2 h-2 rounded-full bg-white mr-2 animate-pulse"></span>
+                <span class="text-[10px] sm:text-xs font-medium text-grey uppercase tracking-widest">Available for hire</span>
+            </div>
+            
+            <h1 class="text-5xl sm:text-6xl md:text-8xl font-bold text-white mb-6 tracking-tighter leading-[1.1]">
+                AI<br/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-b from-white to-grey-600 outline-text">ENGINEER</span>
+            </h1>
+            
+            <p class="max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-grey font-light mb-8 px-4">
+                I architect high-performance AI solutions. <br class="hidden sm:inline"/>Bridging the gap between complex algorithms and real-world utility.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 px-4">
+                <a href="#projects" class="px-8 py-4 rounded-full bg-white text-black font-bold hover:bg-grey transition-colors">
+                    View My Work
+                </a>
+                
+                <!-- Resume Button (Place your 'resume.pdf' in the same folder or update href) -->
+                <a href="resume.pdf" target="_blank" class="px-8 py-4 rounded-full border border-white text-white font-medium hover:bg-white hover:text-black transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="file-text" class="w-5 h-5"></i> Resume
+                </a>
+
+                <a href="https://github.com/Vznu7" target="_blank" class="px-8 py-4 rounded-full border border-border bg-black text-white font-medium hover:bg-card transition-colors flex items-center justify-center gap-2">
+                    <i data-lucide="github" class="w-5 h-5"></i> GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 sm:py-20 md:py-24 bg-black border-t border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
+                <!-- Text Content -->
+                <div>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6 sm:mb-8 tracking-tight">WHAT <span class="text-grey">I DO</span></h2>
+                    <div class="prose prose-invert text-grey text-base sm:text-lg leading-relaxed">
+                        <p class="mb-6">
+                            I am an AI Engineer specializing in building intelligent systems that drive real value. My expertise lies in developing RAG-based assistants, fine-tuning Large Language Models, and creating autonomous AI agents that automate complex workflows.
+                        </p>
+                        <p>
+                            With a strong foundation in software development, I bridge the gap between cutting-edge AI research and robust, scalable applications. Whether it's a conversational interface or a background automation process, I focus on delivering practical solutions that solve problems efficiently.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Image Content (Right Side) -->
+                <div class="relative">
+                    <div class="aspect-[4/5] w-full max-w-md mx-auto bg-card border border-border rounded-2xl overflow-hidden relative group">
+                        <!-- Your Profile Image -->
+                        <img src="1000243748.jpg" alt="Vishnu" class="w-full h-full object-cover object-center opacity-90 group-hover:opacity-100 transition-opacity duration-500">
+                        <!-- Overlay gradient for better text readability if needed -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section (Moved Here) -->
+    <section id="experience" class="py-16 sm:py-20 md:py-24 bg-black border-t border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-10 sm:mb-16 tracking-tight">EXPERIENCE</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+                <!-- Experience Card 1 -->
+                <div class="group border border-border p-5 sm:p-8 hover:bg-card transition-colors duration-300">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4 gap-2">
+                        <h3 class="text-xl sm:text-2xl font-bold text-white group-hover:underline decoration-1 underline-offset-4">AI Engineer Intern</h3>
+                        <span class="text-[10px] sm:text-xs font-mono text-grey border border-border px-2 sm:px-3 py-1 bg-black whitespace-nowrap">2025 - PRESENT</span>
+                    </div>
+                    <p class="text-white font-medium mb-3 sm:mb-4 text-base sm:text-lg">Technex Cloud Networks</p>
+                    <p class="text-grey leading-relaxed">Architecting LLM pipelines serving 1M+ daily users. Reduced inference costs by 40% through quantization strategies and optimized deployment infrastructure.</p>
+                </div>
+
+                <!-- Experience Card 2 -->
+                <div class="group border border-border p-5 sm:p-8 hover:bg-card transition-colors duration-300">
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4 gap-2">
+                        <h3 class="text-xl sm:text-2xl font-bold text-white group-hover:underline decoration-1 underline-offset-4">Software Developer Intern</h3>
+                        <span class="text-[10px] sm:text-xs font-mono text-grey border border-border px-2 sm:px-3 py-1 bg-black whitespace-nowrap">2024</span>
+                    </div>
+                    <p class="text-white font-medium mb-3 sm:mb-4 text-base sm:text-lg">Gateway Software Solutions</p>
+                    <p class="text-grey leading-relaxed">Developed and maintained web applications, created responsive user interfaces, and implemented backend solutions to support business operations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-16 sm:py-20 md:py-24 bg-black border-t border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-10 sm:mb-16 tracking-tight">SKILLS</h2>
+            <!-- Updated grid columns to accommodate 4 items: 1 col mobile, 2 cols tablet, 4 cols desktop -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border">
+                <!-- Card 1 -->
+                <div class="bg-black p-6 sm:p-8 md:p-10 hover:bg-card transition-colors group">
+                    <i data-lucide="terminal" class="w-8 sm:w-10 h-8 sm:h-10 text-white mb-4 sm:mb-6 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 uppercase tracking-wider">Languages</h3>
+                    <ul class="space-y-2 text-grey">
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>Python</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>Java</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>HTML</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>CSS</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-grey mr-3"></span>SQL</li>
+                    </ul>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-black p-6 sm:p-8 md:p-10 hover:bg-card transition-colors group">
+                    <i data-lucide="cpu" class="w-8 sm:w-10 h-8 sm:h-10 text-white mb-4 sm:mb-6 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 uppercase tracking-wider">Frameworks</h3>
+                    <ul class="space-y-2 text-grey">
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>LangChain</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>LangGraph</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>Hugging Face</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>TensorFlow</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>Gradio</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-grey mr-3"></span>Streamlit</li>
+                    </ul>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-black p-6 sm:p-8 md:p-10 hover:bg-card transition-colors group">
+                    <i data-lucide="container" class="w-8 sm:w-10 h-8 sm:h-10 text-white mb-4 sm:mb-6 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 uppercase tracking-wider">Infrastructure</h3>
+                    <ul class="space-y-2 text-grey">
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>Docker & Kubernetes</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>AWS SageMaker</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>Terraform</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-grey mr-3"></span>MLFlow</li>
+                    </ul>
+                </div>
+
+                <!-- Card 4 (New Tools Section) -->
+                <div class="bg-black p-6 sm:p-8 md:p-10 hover:bg-card transition-colors group">
+                    <i data-lucide="workflow" class="w-8 sm:w-10 h-8 sm:h-10 text-white mb-4 sm:mb-6 group-hover:scale-110 transition-transform"></i>
+                    <h3 class="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 uppercase tracking-wider">Tools</h3>
+                    <ul class="space-y-2 text-grey">
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>N8N</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>OpenAI Agent Builder</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>Zapier</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-white mr-3"></span>GitHub</li>
+                        <li class="flex items-center"><span class="w-1.5 h-1.5 bg-grey mr-3"></span>Cursor AI</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-16 sm:py-20 md:py-24 bg-black border-t border-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-10 sm:mb-16 tracking-tight">SELECTED WORKS</h2>
+
+            <div class="space-y-8 sm:space-y-12">
+                <!-- Project 1 -->
+                <div class="group border-t border-border pt-8 sm:pt-12 grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 hover:bg-card/30 transition-colors">
+                    <div class="md:col-span-4">
+                        <span class="text-xs font-mono text-grey border border-border px-2 py-1 mb-3 sm:mb-4 inline-block">01</span>
+                        <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Vision Edge AI</h3>
+                        <p class="text-sm sm:text-base text-grey mb-4 sm:mb-6">Real-time facial micro-expression detection deployed on constrained IoT devices.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs font-medium px-2 py-1 bg-white text-black">PyTorch</span>
+                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">ONNX</span>
+                        </div>
+                    </div>
+                    <div class="md:col-span-8">
+                        <div class="h-48 sm:h-56 md:h-64 bg-card border border-border relative overflow-hidden group-hover:border-white transition-colors">
+                             <!-- Abstract geometric rep -->
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <i data-lucide="scan-face" class="w-24 h-24 text-grey opacity-20 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"></i>
+                            </div>
+                            <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-4">
+                                <a href="#" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors">
+                                    Repo <i data-lucide="github" class="w-4 h-4"></i>
+                                </a>
+                                <a href="#" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors">
+                                    View Project <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="group border-t border-border pt-8 sm:pt-12 grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 hover:bg-card/30 transition-colors">
+                    <div class="md:col-span-4">
+                        <span class="text-xs font-mono text-grey border border-border px-2 py-1 mb-3 sm:mb-4 inline-block">02</span>
+                        <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Legal LLM Assistant</h3>
+                        <p class="text-sm sm:text-base text-grey mb-4 sm:mb-6">RAG-based architecture for summarizing legal contracts with citation verification.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs font-medium px-2 py-1 bg-white text-black">LLaMA-2</span>
+                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">LangChain</span>
+                        </div>
+                    </div>
+                    <div class="md:col-span-8">
+                        <div class="h-64 bg-card border border-border relative overflow-hidden group-hover:border-white transition-colors">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <i data-lucide="scroll-text" class="w-24 h-24 text-grey opacity-20 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"></i>
+                            </div>
+                            <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-4">
+                                <a href="#" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors">
+                                    Repo <i data-lucide="github" class="w-4 h-4"></i>
+                                </a>
+                                <a href="#" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors">
+                                    View Project <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="group border-t border-border pt-8 sm:pt-12 grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 hover:bg-card/30 transition-colors">
+                    <div class="md:col-span-4">
+                        <span class="text-xs font-mono text-grey border border-border px-2 py-1 mb-3 sm:mb-4 inline-block">03</span>
+                        <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Predictive Maintenance</h3>
+                        <p class="text-sm sm:text-base text-grey mb-4 sm:mb-6">End-to-end MLOps pipeline for predicting industrial machinery failure.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs font-medium px-2 py-1 bg-white text-black">XGBoost</span>
+                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">Kubeflow</span>
+                        </div>
+                    </div>
+                    <div class="md:col-span-8">
+                        <div class="h-64 bg-card border border-border relative overflow-hidden group-hover:border-white transition-colors">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <i data-lucide="activity" class="w-24 h-24 text-grey opacity-20 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"></i>
+                            </div>
+                             <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-4">
+                                <a href="#" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors">
+                                    Repo <i data-lucide="github" class="w-4 h-4"></i>
+                                </a>
+                                <a href="#" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors">
+                                    View Project <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 4 (Updated with specific image) -->
+                <div class="group border-t border-border pt-8 sm:pt-12 grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 hover:bg-card/30 transition-colors">
+                    <div class="md:col-span-4">
+                        <span class="text-xs font-mono text-grey border border-border px-2 py-1 mb-3 sm:mb-4 inline-block">04</span>
+                        <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">AI-Powered Job Matching Platform</h3>
+                        <p class="text-sm sm:text-base text-grey mb-4 sm:mb-6">An intelligent job matching hub that analyzes resumes against desired roles and locations to connect candidates with tailored job opportunities via direct application links.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs font-medium px-2 py-1 bg-white text-black">Python</span>
+                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">NLP</span>
+                        </div>
+                    </div>
+                    <div class="md:col-span-8">
+                        <div class="h-48 sm:h-56 md:h-64 bg-card border border-border relative overflow-hidden group-hover:border-white transition-colors">
+                            <!-- AI Job Matcher Project Image -->
+                            <img src="ai_job_matcher.png" alt="Job Matching AI" class="w-full h-full object-cover object-center opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
+                            <!-- Z-index increased to 20 to ensure it is clickable -->
+                            <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-4 z-20">
+                                <a href="https://github.com/Vznu7/ai-job-matcher.git" target="_blank" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors bg-black/50 px-3 py-1 backdrop-blur-sm rounded-full border border-white/20">
+                                    Repo <i data-lucide="github" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://ai-jobhub.vercel.app/" target="_blank" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors bg-black/50 px-3 py-1 backdrop-blur-sm rounded-full border border-white/20">
+                                    View Project <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Project 5 (Updated: E-Commerce Web Application) -->
+                <div class="group border-t border-border pt-8 sm:pt-12 grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 hover:bg-card/30 transition-colors">
+                    <div class="md:col-span-4">
+                        <span class="text-xs font-mono text-grey border border-border px-2 py-1 mb-3 sm:mb-4 inline-block">05</span>
+                        <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Modern E-Commerce Platform</h3>
+                        <p class="text-sm sm:text-base text-grey mb-4 sm:mb-6">A modern, fully-responsive e-commerce platform for fashion and accessories, built with Next.js 14 and TypeScript. Optimized for the Indian market with INR pricing, Razorpay payments, and comprehensive admin dashboard.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs font-medium px-2 py-1 bg-white text-black">Next.js 14</span>
+                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">Razorpay</span>
+                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">TypeScript</span>
+                        </div>
+                    </div>
+                    <div class="md:col-span-8">
+                        <div class="h-48 sm:h-56 md:h-64 bg-card border border-border relative overflow-hidden group-hover:border-white transition-colors">
+                            <!-- E-commerce themed cover image -->
+                            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop" alt="E-Commerce Platform" class="w-full h-full object-cover object-center opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
+                            <!-- Z-index 20 ensures buttons are clickable -->
+                            <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-4 z-20">
+                                <a href="https://github.com/Vznu7/one-piece-web-application.git" target="_blank" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors bg-black/50 px-3 py-1 backdrop-blur-sm rounded-full border border-white/20">
+                                    Repo <i data-lucide="github" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://one-piece-web-application.vercel.app/" target="_blank" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors bg-black/50 px-3 py-1 backdrop-blur-sm rounded-full border border-white/20">
+                                    View Project <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project 6 (Updated: Automation Workflows) -->
+                <div class="group border-t border-b border-border py-8 sm:py-12 grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 hover:bg-card/30 transition-colors">
+                    <div class="md:col-span-4">
+                        <span class="text-xs font-mono text-grey border border-border px-2 py-1 mb-3 sm:mb-4 inline-block">06</span>
+                        <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Automation Workflows</h3>
+                        <p class="text-sm sm:text-base text-grey mb-4 sm:mb-6">A comprehensive suite of intelligent automation workflows. Features custom AI agents built with OpenAI Agent Builder and complex operational pipelines orchestrated via n8n for seamless task automation and data synchronization.</p>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs font-medium px-2 py-1 bg-white text-black">n8n</span>
+                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">OpenAI</span>
+                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">Automation</span>
+                        </div>
+                    </div>
+                    <div class="md:col-span-8">
+                        <div class="h-48 sm:h-56 md:h-64 bg-card border border-border relative overflow-hidden group-hover:border-white transition-colors">
+                            <!-- Automation Workflows Project Image -->
+                            <img src="automation_workflows.png" alt="Automation Workflows" class="w-full h-full object-cover object-center opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
+                            <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-4 z-20">
+                                <a href="https://github.com/Vznu7/n8n-workflows.git" target="_blank" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors bg-black/50 px-3 py-1 backdrop-blur-sm rounded-full border border-white/20">
+                                    Repo <i data-lucide="github" class="w-4 h-4"></i>
+                                </a>
+                                <a href="https://github.com/Vznu7/n8n-workflows.git" target="_blank" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors bg-black/50 px-3 py-1 backdrop-blur-sm rounded-full border border-white/20">
+                                    View Project <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 sm:py-20 md:py-24 bg-black border-t border-border">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">READY TO BUILD?</h2>
+            <p class="text-sm sm:text-base text-grey mb-8 sm:mb-12">I'm currently available for consulting work and new opportunities.</p>
+            
+            <!-- 
+                Powered by Formspree
+                Connected to endpoint: https://formspree.io/f/xlgbjqbn
+            -->
+            <form action="https://formspree.io/f/xlgbjqbn" method="POST" onsubmit="handleFormSubmit(event)" class="text-left bg-card p-5 sm:p-8 border border-border">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+                    <div>
+                        <label class="block text-xs font-bold text-white uppercase tracking-wider mb-2">Name</label>
+                        <input type="text" name="name" required class="w-full bg-black border border-border p-3 text-white focus:outline-none focus:border-white transition-colors" placeholder="Jane Doe">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-white uppercase tracking-wider mb-2">Email</label>
+                        <input type="email" name="email" required class="w-full bg-black border border-border p-3 text-white focus:outline-none focus:border-white transition-colors" placeholder="jane@example.com">
+                    </div>
+                </div>
+                <div class="mb-6 sm:mb-8">
+                    <label class="block text-xs font-bold text-white uppercase tracking-wider mb-2">Message</label>
+                    <textarea name="message" rows="4" required class="w-full bg-black border border-border p-3 text-sm sm:text-base text-white focus:outline-none focus:border-white transition-colors" placeholder="Tell me about your project..."></textarea>
+                </div>
+                <button type="submit" class="w-full bg-white text-black font-bold py-3 sm:py-4 hover:bg-grey transition-colors uppercase tracking-widest text-xs sm:text-sm">
+                    Send Message
+                </button>
+            </form>
+
+            <div class="mt-12 sm:mt-16 flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 text-sm sm:text-base">
+                 <a href="mailto:vishnubalasubramaniann@gmail.com" class="text-grey hover:text-white transition-colors break-all text-center">vishnubalasubramaniann@gmail.com</a>
+                 <span class="text-border hidden sm:inline">|</span>
+                 <a href="https://www.linkedin.com/in/vishnu-vznu" target="_blank" class="text-grey hover:text-white transition-colors">LinkedIn</a>
+                 <span class="text-border hidden sm:inline">|</span>
+                 <a href="https://github.com/Vznu7" target="_blank" class="text-grey hover:text-white transition-colors">GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-border py-8 sm:py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
+            <div class="text-white text-lg sm:text-xl font-bold tracking-tighter">VISHNU</div>
+            <div class="text-grey text-xs sm:text-sm">
+                &copy; 2023. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-4 sm:bottom-5 right-4 sm:right-5 left-4 sm:left-auto transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <div class="bg-white text-black px-4 sm:px-6 py-3 sm:py-4 shadow-2xl flex items-center gap-3 border border-grey rounded-lg sm:rounded-none">
+            <i data-lucide="check" class="w-4 sm:w-5 h-4 sm:h-5"></i>
+            <span class="font-bold text-xs sm:text-sm">Message Sent</span>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // --- UI UTILITIES ---
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const overlay = document.getElementById('mobile-overlay');
+            const hamburger = document.getElementById('hamburger');
+            
+            menu.classList.toggle('active');
+            overlay.classList.toggle('active');
+            hamburger.classList.toggle('active');
+            
+            // Prevent body scroll when menu is open
+            if (menu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        };
+
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 20) {
+                nav.classList.add('border-b', 'border-border');
+            } else {
+                nav.classList.remove('border-b', 'border-border');
+            }
+        });
+
+        // Formspree AJAX Handler
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const btn = form.querySelector('button');
+            const originalText = btn.innerText;
+
+            // Simple check to warn if the ID hasn't been updated
+            if (form.action.includes('YOUR_FORM_ID')) {
+                alert('Please update the Form ID in the code with your specific Formspree ID.');
+                return;
+            }
+
+            btn.innerText = 'TRANSMITTING...';
+            btn.disabled = true;
+            btn.classList.add('opacity-75');
+
+            try {
+                const response = await fetch(form.action, {
+                    method: form.method,
+                    body: new FormData(form),
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    form.reset();
+                    const toast = document.getElementById('toast');
+                    toast.classList.remove('translate-y-20', 'opacity-0');
+                    setTimeout(() => {
+                        toast.classList.add('translate-y-20', 'opacity-0');
+                    }, 3000);
+                } else {
+                    const data = await response.json();
+                    if (Object.hasOwn(data, 'errors')) {
+                        alert(data["errors"].map(error => error["message"]).join(", "));
+                    } else {
+                        alert("Oops! There was a problem submitting your form");
+                    }
+                }
+            } catch (error) {
+                alert("Oops! There was a problem submitting your form");
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+                btn.classList.remove('opacity-75');
+            }
+        };
+    </script>
+</body>
+</html>
