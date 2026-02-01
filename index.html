@@ -4,6 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vishnu | AI Engineer</title>
+    
+    <!-- Favicon - will be set dynamically with rounded crop -->
+    <link rel="icon" type="image/png" id="favicon">
+    <link rel="apple-touch-icon" id="apple-touch-icon">
+    
+    <script>
+        // Create rounded favicon from image
+        (function() {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                const size = 64;
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+                
+                // Calculate crop to remove black spaces and center the face
+                const minDim = Math.min(img.width, img.height);
+                const sx = (img.width - minDim) / 2;
+                const sy = (img.height - minDim) / 2;
+                
+                // Create circular clip
+                ctx.beginPath();
+                ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.clip();
+                
+                // Draw cropped and scaled image
+                ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+                
+                // Set favicon
+                const faviconUrl = canvas.toDataURL('image/png');
+                document.getElementById('favicon').href = faviconUrl;
+                document.getElementById('apple-touch-icon').href = faviconUrl;
+            };
+            img.src = 'favicon.png';
+        })();
+    </script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -410,23 +450,24 @@
                 <div class="group border-t border-border pt-8 sm:pt-12 grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 hover:bg-card/30 transition-colors">
                     <div class="md:col-span-4">
                         <span class="text-xs font-mono text-grey border border-border px-2 py-1 mb-3 sm:mb-4 inline-block">02</span>
-                        <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Legal LLM Assistant</h3>
-                        <p class="text-sm sm:text-base text-grey mb-4 sm:mb-6">RAG-based architecture for summarizing legal contracts with citation verification.</p>
+                        <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Diabetes Prediction App</h3>
+                        <p class="text-sm sm:text-base text-grey mb-4 sm:mb-6">A machine learning-based web application to predict diabetes risk using clinical health indicators. Analyzes 8 key medical parameters including glucose levels, BMI, blood pressure, insulin, and age to provide instant risk assessment with confidence scores. Features gender-aware dynamic UI and real-time predictions with risk interpretation.</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="text-xs font-medium px-2 py-1 bg-white text-black">LLaMA-2</span>
-                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">LangChain</span>
+                            <span class="text-xs font-medium px-2 py-1 bg-white text-black">Python</span>
+                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">Streamlit</span>
+                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">scikit-learn</span>
+                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">Hugging Face</span>
                         </div>
                     </div>
                     <div class="md:col-span-8">
-                        <div class="h-64 bg-card border border-border relative overflow-hidden group-hover:border-white transition-colors">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <i data-lucide="scroll-text" class="w-24 h-24 text-grey opacity-20 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"></i>
-                            </div>
-                            <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-4">
-                                <a href="#" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors">
+                        <div class="h-48 sm:h-56 md:h-64 bg-card border border-border relative overflow-hidden group-hover:border-white transition-colors">
+                            <!-- Diabetes Prediction App Cover Image -->
+                            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80" alt="Diabetes Prediction App" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500">
+                            <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-4 z-20">
+                                <a href="https://github.com/Vznu7/diabeties-prediction.git" target="_blank" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors bg-black/50 px-3 py-1 backdrop-blur-sm rounded-full border border-white/20">
                                     Repo <i data-lucide="github" class="w-4 h-4"></i>
                                 </a>
-                                <a href="#" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors">
+                                <a href="https://diabeties-prediction-from-vznu.streamlit.app/" target="_blank" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors bg-black/50 px-3 py-1 backdrop-blur-sm rounded-full border border-white/20">
                                     View Project <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
                                 </a>
                             </div>
@@ -438,25 +479,24 @@
                 <div class="group border-t border-border pt-8 sm:pt-12 grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 hover:bg-card/30 transition-colors">
                     <div class="md:col-span-4">
                         <span class="text-xs font-mono text-grey border border-border px-2 py-1 mb-3 sm:mb-4 inline-block">03</span>
-                        <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Predictive Maintenance</h3>
-                        <p class="text-sm sm:text-base text-grey mb-4 sm:mb-6">End-to-end MLOps pipeline for predicting industrial machinery failure.</p>
+                        <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">Smart Helmet</h3>
+                        <p class="text-sm sm:text-base text-grey mb-4 sm:mb-6">An IoT-enabled smart helmet using ESP32 for real-time rider safety monitoring. Features alcohol detection, crash detection logic, GPS-based location tracking, and GSM communication for automatic emergency alerts. Developed embedded firmware in C for sensor interfacing and alert transmission.</p>
                         <div class="flex flex-wrap gap-2">
-                            <span class="text-xs font-medium px-2 py-1 bg-white text-black">XGBoost</span>
-                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">Kubeflow</span>
+                            <span class="text-xs font-medium px-2 py-1 bg-white text-black">ESP32</span>
+                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">IoT</span>
+                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">Embedded C</span>
+                            <span class="text-xs font-medium px-2 py-1 border border-border text-grey">GPS/GSM</span>
                         </div>
                     </div>
                     <div class="md:col-span-8">
-                        <div class="h-64 bg-card border border-border relative overflow-hidden group-hover:border-white transition-colors">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <i data-lucide="activity" class="w-24 h-24 text-grey opacity-20 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"></i>
-                            </div>
-                             <div class="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-4">
-                                <a href="#" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors">
-                                    Repo <i data-lucide="github" class="w-4 h-4"></i>
-                                </a>
-                                <a href="#" class="flex items-center gap-2 text-white text-sm font-bold uppercase tracking-wide hover:text-grey transition-colors">
-                                    View Project <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
-                                </a>
+                        <div class="h-48 sm:h-56 md:h-64 bg-card border border-border relative overflow-hidden group-hover:border-white transition-colors">
+                            <!-- Smart Helmet Project Image -->
+                            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80" alt="Smart Helmet - IoT Safety Device" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                                <span class="flex items-center gap-2 text-white text-sm font-medium bg-black/50 px-3 py-1 backdrop-blur-sm rounded-full border border-white/20">
+                                    <i data-lucide="cpu" class="w-4 h-4"></i> Hardware Project
+                                </span>
                             </div>
                         </div>
                     </div>
